@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1",
+    "name": "PulseFit S1 (Smart Watch)",
+    "price": 149.99,
+    "description": "AMOLED Display, Heart Rate, Sports Tracker",
+    "image": "https://i.ibb.co.com/Ngn1VjT6/smart-watch.jpg",
+    "category": "smartwatch",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "name": "NovaBook 14 (Laptop)",
+    "price": 899,
+    "description": "14” Light Weight Laptop, Fast SSD & Long Life Battery",
+    "image": "https://i.ibb.co.com/dsC9cC86/laptop.jpg",
+    "category": "laptop",
+    "featured": true
+  },
+  {
+    "id": "3",
+    "name": "AirGo Lite (Wireless Earbuds)",
+    "price": 79,
+    "description": "Earbuds with ENC Call Clarity & Fast Charging",
+    "image": "https://i.ibb.co.com/TD8ySrxV/airpods.jpg",
+    "category": "earbuds",
+    "featured": false
+  },
+  {
+    "id": "4",
+    "name": "SlatePad 10 (Tablet/iPad class)",
+    "price": 399,
+    "description": "10” Tablet, Perfect for Study & Media Consumption",
+    "image": "https://i.ibb.co.com/zh4L271j/ipad.jpg",
+    "category": "tablet",
+    "featured": true
+  },
+  {
+    "id": "5",
+    "name": "CanonCam X (Mirrorless Camera)",
+    "price": 699,
+    "description": "24MP Sensor, Dual-Pixel AF, 4K Video Support",
+    "image": "https://i.ibb.co.com/4w4p4dQD/canon.jpg",
+    "category": "camera",
+    "featured": false
+  },
+  {
+    "id": "6",
+    "name": "Vlogger 4K (Video Camera)",
+    "price": 499,
+    "description": "4K/60 for Video, Stabilization & Tilt Screen Creator",
+    "image": "https://i.ibb.co.com/CpDtRsF8/video-camera.jpg",
+    "category": "video-camera",
+    "featured": false
+  }
+]

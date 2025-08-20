@@ -116,10 +116,10 @@ export default function Hero() {
                   A handy widget for everyday tasks
                 </div>
               </div>
-              <div className="text-sm font-mono">$29.99</div>
+              
             </div>
 
-            <div className="mt-4 flex gap-2">
+            {/* <div className="mt-4 flex gap-2">
               <button
                 className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm hover:-translate-y-0.5 transition"
                 style={{
@@ -138,7 +138,7 @@ export default function Hero() {
               >
                 Details
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* floating glow */}

@@ -2,6 +2,7 @@ import HighlightsProducts from "@/components/HighlightsProducts";
 import Hero from "../components/Hero";
 import Categories from "@/components/Categories";
 import FAQ from "@/components/FAQ";
+import Testimonials from "@/components/Testimonials";
 
 export default function HomePage() {
   return (
@@ -9,8 +10,8 @@ export default function HomePage() {
       <Hero />
       <HighlightsProducts/>
       <Categories/>
+      <Testimonials/>
       <FAQ/>
-      
     </>
   );
 }

@@ -1,24 +1,62 @@
 @import "tailwindcss";
 
+/* 1) Default (Light) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --muted: #6b7280;          /* secondary text */
+  --card: #f8fafc;           /* panel bg */
+  --border: #e5e7eb;
+  --accent: #4f46e5;         /* indigo */
+  --accent-contrast: #ffffff;
+  --brand-gradient: linear-gradient(90deg, #4f46e5, #d946ef, #f43f5e);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* 2) System fallback (no JS needed): prefers dark */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #e5e7eb;
+    --muted: #a3a3a3;
+    --card: #111216;
+    --border: #27272a;
+    --accent: #818cf8;        /* lighter indigo */
+    --accent-contrast: #0a0a0a;
+    --brand-gradient: linear-gradient(90deg, #6366f1, #e879f9, #fb7185);
   }
 }
 
+html[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #6b7280;
+  --card: #f8fafc;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-contrast: #ffffff;
+  --brand-gradient: linear-gradient(90deg, #4f46e5, #d946ef, #f43f5e);
+}
+
+html[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #e5e7eb;
+  --muted: #a3a3a3;
+  --card: #111216;
+  --border: #27272a;
+  --accent: #818cf8;
+  --accent-contrast: #0a0a0a;
+  --brand-gradient: linear-gradient(90deg, #6366f1, #e879f9, #fb7185);
+}
+
+/* (Optional) Tailwind v4 tokens—চাইলে ব্যবহার করো */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans";
+}
+
+/* Base */
 body {
   background: var(--background);
   color: var(--foreground);

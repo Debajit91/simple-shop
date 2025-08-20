@@ -16,19 +16,14 @@ function formatPrice(n) {
 
 export default async function HighlightsProducts() {
   const all = await getProducts();
-
-  // Option A: প্রথম ৩টা দেখাও
-  const items = all.slice(0, 3);
-
-  // Option B (পরে চাইলে): featured ফিল্টার
-  // const items = all.filter(p => p.featured).slice(0, 3);
+  const items = all.slice(0, 3); // or filter by featured
 
   if (!items.length) {
     return (
       <section id="highlights" className="py-12 sm:py-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-xl sm:text-2xl font-bold mb-4">Product highlights</h2>
-          <p className="text-[color:var(--foreground)]/75">No products yet.</p>
+          <p className="text-[var(--foreground)]/75">No products yet.</p>
         </div>
       </section>
     );
@@ -38,11 +33,8 @@ export default async function HighlightsProducts() {
     <section id="highlights" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-3 mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">Product Highlights</h2>
-          <Link
-            href="/products"
-            className="text-sm font-medium underline hover:no-underline"
-          >
+          <h2 className="text-xl sm:text-2xl font-bold">Product highlights</h2>
+          <Link href="/products" className="text-sm font-medium underline hover:no-underline">
             View all
           </Link>
         </div>
@@ -51,13 +43,10 @@ export default async function HighlightsProducts() {
           {items.map((p) => (
             <article
               key={p.id}
-              className="rounded-xl border p-3 sm:p-4 hover:-translate-y-0.5 hover:shadow-sm transition"
-              style={{ background: "var(--card)", borderColor: "var(--border)" }}
+              className="rounded-xl border p-3 sm:p-4 hover:-translate-y-0.5 hover:shadow-sm transition
+                         bg-[var(--card)] border-[var(--border)]"
             >
-              <div
-                className="aspect-[16/10] overflow-hidden rounded-lg border mb-3"
-                style={{ borderColor: "var(--border)" }}
-              >
+              <div className="aspect-[16/10] overflow-hidden rounded-lg border mb-3 border-[var(--border)]">
                 <img
                   src={p.image}
                   alt={p.name}
@@ -68,7 +57,7 @@ export default async function HighlightsProducts() {
               </div>
 
               <h3 className="text-base sm:text-lg font-semibold">{p.name}</h3>
-              <p className="text-sm text-[color:var(--foreground)]/75 mt-1 line-clamp-2">
+              <p className="text-sm text-[var(--foreground)]/75 mt-1 line-clamp-2">
                 {p.description}
               </p>
 
@@ -77,19 +66,18 @@ export default async function HighlightsProducts() {
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/products/${p.id}`}
-                    className="px-3 py-1.5 rounded-md text-xs font-medium border hover:bg-[var(--background)] transition"
-                    style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                    className="px-3 py-1.5 rounded-md text-xs font-medium border transition
+                               hover:bg-[var(--background)]
+                               border-[var(--border)] text-[var(--foreground)]"
                     aria-label={`View details for ${p.name}`}
                   >
                     Details
                   </Link>
                   <Link
                     href={`/products/${p.id}`}
-                    className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm hover:-translate-y-0.5 transition"
-                    style={{
-                      backgroundImage: "var(--brand-gradient)",
-                      color: "var(--accent-contrast)",
-                    }}
+                    className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm transition
+                               hover:-translate-y-0.5
+                               text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]"
                     aria-label={`Buy ${p.name}`}
                   >
                     Buy

@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import ThemeToggle from "@/components/ThemeToggle";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/cart/cart";
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

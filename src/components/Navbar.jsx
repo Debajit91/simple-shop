@@ -32,6 +32,7 @@ export default function Navbar({RightSlot}) {
           <nav className="hidden md:flex items-center gap-2">
             <NavLink href="/">Home</NavLink>
             <NavLink href="/products">Products</NavLink>
+            <NavLink href="/#about">About Us</NavLink>
 
             <div className="w-2" />
             {RightSlot}

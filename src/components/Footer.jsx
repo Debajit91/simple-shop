@@ -60,7 +60,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold mb-3">Company</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a className="hover:underline" href="#hero">
+                <a className="hover:underline" href="#about">
                   About
                 </a>
               </li>

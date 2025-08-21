@@ -33,7 +33,7 @@ export default async function HighlightsProducts() {
     <section id="highlights" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-3 mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">Product highlights</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">Product Highlights</h2>
           <Link href="/products" className="text-sm font-medium underline hover:no-underline">
             View all
           </Link>

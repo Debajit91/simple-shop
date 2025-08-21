@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import ThemeToggle from "@/components/ThemeToggle";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/components/cart/cart";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,14 +26,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
-        <Navbar RightSlot={<ThemeToggle/>}/>
+        <CartProvider>
+          <Navbar RightSlot={<ThemeToggle />} />
 
-        <main>
-          {children}
-        </main>
+          <main>{children}</main>
 
-        <Footer/>
-
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

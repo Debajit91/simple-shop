@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProduct, getProducts } from "../../../../lib/products";
-
+import AddToCartButton from "@/components/AddToCartButton";
 
 // দাম ফরম্যাটার (আগেরটা-ই)
 function formatPrice(n) {
@@ -115,17 +115,14 @@ export default async function ProductDetailPage({ params }) {
 
             {/* actions */}
             <div className="mt-6 flex gap-3">
-              <button
-                type="button"
-                className="px-4 py-2 rounded-md text-sm font-semibold shadow-sm transition
-                           hover:-translate-y-0.5
-                           text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]"
-                aria-label={`Add ${p.name} to cart`}
-                disabled
-                title="Cart coming soon"
-              >
-                Add to cart
-              </button>
+              <AddToCartButton
+                product={{
+                  id: p.id,
+                  name: p.name,
+                  price: p.price,
+                  image: p.image,
+                }}
+               />
               <Link
                 href="/products"
                 className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:bg-[var(--card)] transition"

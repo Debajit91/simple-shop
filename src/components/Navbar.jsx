@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import NavLink from "./NavLink";
+import CartBadge from "./CartBadge";
 
 export default function Navbar({RightSlot}) {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,7 @@ export default function Navbar({RightSlot}) {
             <NavLink href="/products">Products</NavLink>
             <NavLink href="/#about">About Us</NavLink>
             <NavLink href="/contact">Contact</NavLink>
+            <NavLink href="/cart">Cart <CartBadge/></NavLink>
 
             <div className="w-2" />
             {RightSlot}

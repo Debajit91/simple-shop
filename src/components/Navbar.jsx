@@ -33,6 +33,7 @@ export default function Navbar({RightSlot}) {
             <NavLink href="/">Home</NavLink>
             <NavLink href="/products">Products</NavLink>
             <NavLink href="/#about">About Us</NavLink>
+            <NavLink href="/contact">Contact</NavLink>
 
             <div className="w-2" />
             {RightSlot}

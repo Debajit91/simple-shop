@@ -53,6 +53,27 @@ export default function Footer() {
                   Cameras
                 </a>
               </li>
+              <li>
+                <a
+                  className="hover:underline"
+                  href="/products?category=video-camera"
+                >
+                  Video Cameras
+                </a>
+              </li>
+              <li>
+                <a className="hover:underline" href="/products?category=tablet">
+                  iPad / Tablet
+                </a>
+              </li>
+              <li>
+                <a
+                  className="hover:underline"
+                  href="/products?category=earbuds"
+                >
+                  Airpods / Earbuds
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -91,7 +112,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a className="hover:underline" href="#">
+                <a className="hover:underline" href="/contact">
                   Contact
                 </a>
               </li>
@@ -126,7 +147,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://www.linkedin.com/in/debajitroy25" 
+              href="https://www.linkedin.com/in/debajitroy25"
               target="_blank"
               aria-label="LinkedIn"
               className="hover:opacity-80"

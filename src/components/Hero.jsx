@@ -24,7 +24,7 @@ export default function Hero() {
           </h1>
 
           {/* subheadline */}
-          <p className="text-base sm:text-lg text-[var(--foreground)]/80">
+          <p className="text-base sm:text-lg text-justify text-[var(--foreground)]/80">
             Shop curated laptops, tablets, wearables, and professional cameras. Transparent pricing,
             quick checkout, and responsive support — built for a seamless experience across devices.
           </p>

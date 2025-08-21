@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   // NOTE: getProduct server-side, তাই এখানে ব্যবহার করা safe
   // (ইচ্ছা হলে try/catch দিয়ে সেফটি রাখতে পারেন)
   try {
-    const p = await getProducts(id);
+    const p = await getProduct(id);
     if (!p) return { title: "Product not found — Simple Shop" };
     return {
       title: `${p.name} — Simple Shop`,

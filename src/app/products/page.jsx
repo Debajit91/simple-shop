@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProducts } from "../../../lib/products";
-
+import AddToCartButton from "../../components/AddToCartButton";
 function formatPrice(n) {
   try {
     return new Intl.NumberFormat("en-US", {
@@ -13,11 +13,13 @@ function formatPrice(n) {
   }
 }
 
+const btnSm =
+  "inline-flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-semibold leading-none shadow-sm transition hover:-translate-y-0.5";
+
 export default async function ProductsPage({ searchParams }) {
   const category =
     typeof searchParams?.category === "string" ? searchParams.category : null;
-  const q =
-    typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
+  const q = typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
 
   const all = await getProducts();
 
@@ -98,7 +100,12 @@ export default async function ProductsPage({ searchParams }) {
               aria-label="Search"
             >
               {/* magnifier icon */}
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8L20 22l2-2-6.5-6.5zM5 10.5A5.5 5.5 0 1 1 10.5 16 5.5 5.5 0 0 1 5 10.5z" />
               </svg>
               Search
@@ -140,16 +147,25 @@ export default async function ProductsPage({ searchParams }) {
                 </p>
 
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm font-mono">{formatPrice(p.price)}</span>
+                  <span className="text-sm font-mono">
+                    {formatPrice(p.price)}
+                  </span>
                   <Link
                     href={`/products/${p.id}`}
-                    className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm transition
-                               hover:-translate-y-0.5
-                               text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]"
+                    className={`${btnSm} border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--card)]`}
                     aria-label={`View details for ${p.name}`}
                   >
                     Details
                   </Link>
+                  <AddToCartButton
+                    compact
+                    product={{
+                      id: p.id,
+                      name: p.name,
+                      price: p.price,
+                      image: p.image,
+                    }}
+                  />
                 </div>
               </article>
             ))}

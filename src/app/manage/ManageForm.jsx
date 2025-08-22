@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { createProduct } from "./action"; // ←
 import Swal from "sweetalert2";
+import SubmitButton from "@/components/SubmitButton";
 
 const initialState = { error: null };
 
@@ -35,7 +36,7 @@ export default function ManageForm() {
         toast: true,
         position: "top-center",
       });
-      formRef.current?.reset();
+    //   formRef.current?.reset();
       setImageUrl("");
       if (fileRef.current) fileRef.current.value = ""; // ফর্ম ক্লিয়ার
       // প্রয়োজনে ইমেজ প্রিভিউ state ক্লিয়ার করো
@@ -153,7 +154,7 @@ export default function ManageForm() {
           </select>
         </div>
 
-        {/* Price with ৳ icon */}
+        
         <div>
           <label className="block text-xs font-medium mb-1">Price</label>
           <div className="relative">
@@ -257,15 +258,17 @@ export default function ManageForm() {
           >
             Reset
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-md text-sm font-semibold shadow-sm
+          <SubmitButton pendingText="Adding">
+            Add product
+          </SubmitButton>
+            {/* type="submit" */}
+            {/* className="px-4 py-2 rounded-md text-sm font-semibold shadow-sm
                        text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]
                        transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40 active:translate-y-0"
           >
-            Add product
-          </button>
+            
+          </button> */}
         </div>
       </div>
     </form>

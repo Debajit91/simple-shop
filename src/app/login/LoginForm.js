@@ -56,9 +56,13 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full cursor-pointer px-4 py-2 rounded-md text-sm mb-5 font-semibold shadow-sm
-                     text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]
-                     disabled:opacity-60 hover:bg-[var(--card)]"
+          className="w-full cursor-pointer px-4 py-2 rounded-md text-sm mb-5 font-semibold
+             text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)] bg-[length:200%_200%] bg-[position:0%_50%]
+             hover:bg-[position:100%_50%]
+             transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40
+             active:translate-y-0 active:brightness-95
+             disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? "Signing in…" : "Login"}
         </button>

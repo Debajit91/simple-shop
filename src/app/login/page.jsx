@@ -25,7 +25,7 @@ export default async function LoginPage() {
         </div>
 
         {/* Right: optimized image */}
-        <div className="relative rounded-xl overflow-hidden border border-[var(--border)] min-h-[260px] sm:min-h-[360px]">
+        <div className="relative rounded-xl overflow-hidden border border-[var(--border)] min-h-[260px] sm:min-h-[360px] hidden lg:block">
           <LoginLottie/>
         </div>
       </div>

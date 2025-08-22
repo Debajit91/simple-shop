@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Lottie from "lottie-react";
 // সরাসরি ইমপোর্ট (সবচেয়ে সহজ): ফাইলটা src/ এর মধ্যে থাকলে
-import animationData from "../../src/assets/lottie/Login.json";
+import animationData from "../assets/lottie/SignUp.json";
 
 export default function LoginLottie() {
   // Reduce Motion সম্মান করা (উইন্ডো প্রেফারেন্স অনুযায়ী)

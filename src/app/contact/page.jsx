@@ -6,10 +6,11 @@ export const metadata = {
   description: "Get in touch with Simple Shop",
 };
 
-export default function ContactPage({ searchParams }) {
-  const sent = searchParams?.sent === "1";
-  const mailSkippedOrFailed = searchParams?.mail === "0";
-  const error = searchParams?.error;
+export default async function ContactPage({ searchParams }) {
+  const sp = await searchParams;
+  const sent = sp?.sent === "1";
+  const mailSkippedOrFailed = sp?.mail === "0";
+  const error =  sp?.error;
 
   return (
     <section className="py-12 sm:py-16">

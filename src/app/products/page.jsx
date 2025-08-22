@@ -17,9 +17,11 @@ const btnSm =
   "inline-flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-semibold leading-none shadow-sm transition hover:-translate-y-0.5";
 
 export default async function ProductsPage({ searchParams }) {
+  const sp = await searchParams;
+
   const category =
-    typeof searchParams?.category === "string" ? searchParams.category : null;
-  const q = typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
+    typeof sp?.category === "string" ? sp.category : null;
+  const q = typeof sp?.q === "string" ? sp.q.trim() : "";
 
   const all = await getProducts();
 

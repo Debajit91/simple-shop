@@ -43,12 +43,12 @@ A modern, minimal storefront for premium electronics built with **Next.js 15 (Ap
 ## Getting Started
 
 ### 1) Clone & install
-```bash
+
 git clone https://github.com/<your-user>/simple-shop.git
 cd simple-shop
 npm install
 
-
+---
 
 2) Environment variables
 

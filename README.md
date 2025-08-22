@@ -48,7 +48,7 @@ git clone https://github.com/<your-user>/simple-shop.git
 cd simple-shop
 npm install
 
----
+
 
 2) Environment variables
 

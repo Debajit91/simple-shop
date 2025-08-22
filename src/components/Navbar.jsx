@@ -51,7 +51,7 @@ export default function Navbar({ RightSlot }) {
             <NavLink href="/products">Products</NavLink>
             <NavLink href="/#about">About Us</NavLink>
             <NavLink href="/contact">Contact</NavLink>
-            {session && <NavLink href='/manage'>Add Product</NavLink>}
+            {session && <NavLink href='/dashboard'>Dashboard</NavLink>}
             <NavLink href="/cart">
               Cart <CartBadge />
             </NavLink>
@@ -118,7 +118,7 @@ export default function Navbar({ RightSlot }) {
           <NavLink href="/products" onClick={() => setOpen(false)}>Products</NavLink>
           <NavLink href="/#about" onClick={() => setOpen(false)}>About Us</NavLink>
           <NavLink href="/contact" onClick={() => setOpen(false)}>Contact</NavLink>
-          {session && <NavLink href='/manage'>Add Product</NavLink>}
+          {session && <NavLink href='/dashboard'>Dashboard</NavLink>}
           <NavLink href="/cart" onClick={() => setOpen(false)}>Cart</NavLink>
 
           {/* Auth in mobile */}

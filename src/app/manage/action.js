@@ -51,9 +51,8 @@ export async function createProduct(prevState, formData) {
         price: Math.round(priceNumber),
         image: image || null,
         description: description || null,
-        category: categoryRaw,             
+        category: categoryRaw,     ownerEmail: session.user?.email || null,        
       },
-      
     });
     return { ok: true };
     

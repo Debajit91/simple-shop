@@ -81,8 +81,11 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  ownerEmail String?
+
   // নতুন ফিল্ড
   category Category @default(LAPTOP)
 
+  @@index([ownerEmail])
   @@index([category, createdAt])
 }

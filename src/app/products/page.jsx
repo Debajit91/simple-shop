@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getProducts } from "../../../lib/products";
+
 import AddToCartButton from "../../components/AddToCartButton";
+import { prisma } from "lib/prisma";
 function formatPrice(n) {
   try {
     return new Intl.NumberFormat("en-US", {
@@ -19,24 +20,27 @@ const btnSm =
 export default async function ProductsPage({ searchParams }) {
   const sp = await searchParams;
 
-  const category =
-    typeof sp?.category === "string" ? sp.category : null;
+  const category = typeof sp?.category === "string" ? sp.category : null;
   const q = typeof sp?.q === "string" ? sp.q.trim() : "";
 
-  const all = await getProducts();
+  const items = await prisma.product.findMany({
+    where: {
+      AND: [
+        category ? { category } : {},
+        q
+          ? {
+              OR: [
+                { name: { contains: q, mode: "insensitive" } },
+                { description: { contains: q, mode: "insensitive" } },
+              ],
+            }
+          : {},
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
-  // ক্যাটাগরি ফিল্টার (থাকলে)
-  let items = category ? all.filter((p) => p.category === category) : all;
 
-  // সার্চ ফিল্টার: name + description
-  if (q) {
-    const needle = q.toLowerCase();
-    items = items.filter(
-      (p) =>
-        p.name.toLowerCase().includes(needle) ||
-        (p.description || "").toLowerCase().includes(needle)
-    );
-  }
 
   return (
     <section className="py-12 sm:py-16">

@@ -2,6 +2,10 @@ import Link from "next/link";
 
 import AddToCartButton from "../../components/AddToCartButton";
 import { prisma } from "lib/prisma";
+
+export const metadata = { title: "Products — SimpleShop" };
+
+
 function formatPrice(n) {
   try {
     return new Intl.NumberFormat("en-US", {
@@ -20,18 +24,43 @@ const btnSm =
 export default async function ProductsPage({ searchParams }) {
   const sp = await searchParams;
 
+  const pick = (v) => Array.isArray(v) ? v.at(-1) : (typeof v === "string" ? v : null);
+
+  const qSlug = (pick(sp?.q) || "").trim();
+  const catSlug = (pick(sp?.category) || "").trim().toLowerCase();
+
   const category = typeof sp?.category === "string" ? sp.category : null;
   const q = typeof sp?.q === "string" ? sp.q.trim() : "";
+
+  const CAT_MAP = {
+    "smartwatch":  "SMART_WATCH",
+    "laptop":      "LAPTOP",
+    "earbuds":     "AIRPOD",       // enum এ AIRPOD
+    "tablet":      "IPAD",
+    "camera":      "CAMERA",
+    "video-camera":"VIDEO_CAMERA",
+
+    // যদি কখনো enum ভ্যালু দিয়েও কল হয়, সেগুলোকেও সাপোর্ট দেই
+    "SMART_WATCH":"SMART_WATCH",
+    "LAPTOP":"LAPTOP",
+    "AIRPOD":"AIRPOD",
+    "IPAD":"IPAD",
+    "CAMERA":"CAMERA",
+    "VIDEO_CAMERA":"VIDEO_CAMERA",
+  };
+
+  // Prisma enum ভ্যালু (না পেলে null)
+  const categoryEnum = CAT_MAP[catSlug] || null;
 
   const items = await prisma.product.findMany({
     where: {
       AND: [
-        category ? { category } : {},
-        q
+        categoryEnum ? { category: categoryEnum } : {},
+        qSlug
           ? {
               OR: [
-                { name: { contains: q, mode: "insensitive" } },
-                { description: { contains: q, mode: "insensitive" } },
+                { name:        { contains: qSlug, mode: "insensitive" } },
+                { description: { contains: qSlug, mode: "insensitive" } },
               ],
             }
           : {},

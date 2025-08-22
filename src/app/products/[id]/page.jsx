@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct, getProducts } from "../../../../lib/products";
 import AddToCartButton from "@/components/AddToCartButton";
+import { prisma } from "lib/prisma";
 
 // দাম ফরম্যাটার (আগেরটা-ই)
 function formatPrice(n) {
@@ -16,19 +16,15 @@ function formatPrice(n) {
   }
 }
 
-// প্রোডাক্টের ডিটেইল পেজ build time-এ জেনারেট ফলে প্রোডাকশন-এ আরও দ্রুত সার্ভ হবে।
-export async function generateStaticParams() {
-  const all = await getProducts();
-  return all.map((p) => ({ id: p.id })); // /products/1, /products/2, ...
-}
+
 
 // ✅ SEO: ডাইনামিক টাইটেল/ডেস্ক্রিপশন
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   // NOTE: getProduct server-side, তাই এখানে ব্যবহার করা safe
   // (ইচ্ছা হলে try/catch দিয়ে সেফটি রাখতে পারেন)
   try {
-    const p = await getProduct(id);
+    const p = await prisma.product(id);
     if (!p) return { title: "Product not found — Simple Shop" };
     return {
       title: `${p.name} — Simple Shop`,
@@ -45,8 +41,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductDetailPage({ params }) {
-  const { id } = params; // URL থেকে ডাইনামিক সেগমেন্ট (/products/[id])
-  const p = await getProduct(id); // data/products.json থেকে একক প্রোডাক্ট
+  const { id } = await params; // URL থেকে ডাইনামিক সেগমেন্ট (/products/[id])
+  const p = await prisma.product.findUnique({ where: { id } }); // data/products.json থেকে একক প্রোডাক্ট
 
   if (!p) notFound(); // না পেলে 404 ট্রিগার
 

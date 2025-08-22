@@ -4,6 +4,8 @@ A modern, minimal storefront for premium electronics built with **Next.js 15 (Ap
 
 ---
 
+# Live Site: [SimpleShop](https://simple-shop-next.vercel.app)
+
 ## Features
 
 - **Next.js 15 (App Router)** — server components, server actions, `searchParams` handling
@@ -232,7 +234,7 @@ Configure Environment Variables in the dashboard.
 
 Add production Google OAuth redirect URL:
 
-https://your-domain.com/api/auth/callback/google
+https://https://simple-shop-next.vercel.app/api/auth/callback/google
 
 
 Add production hosts to images.remotePatterns.

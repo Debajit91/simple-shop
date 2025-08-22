@@ -16,8 +16,6 @@ function formatPrice(n) {
   }
 }
 
-
-
 // ✅ SEO: ডাইনামিক টাইটেল/ডেস্ক্রিপশন
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -40,9 +38,14 @@ export async function generateMetadata({ params }) {
   }
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ProductDetailPage({ params }) {
   const { id } = await params; // URL থেকে ডাইনামিক সেগমেন্ট (/products/[id])
-  const p = await prisma.product.findUnique({ where: { id } }); // data/products.json থেকে একক প্রোডাক্ট
+  const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+  const p = await prisma.product.findUnique({ where: isObjectId ? { id } : { slug: id } })
+  .catch(() => null);; // data/products.json থেকে একক প্রোডাক্ট
 
   if (!p) notFound(); // না পেলে 404 ট্রিগার
 
@@ -118,7 +121,7 @@ export default async function ProductDetailPage({ params }) {
                   price: p.price,
                   image: p.image,
                 }}
-               />
+              />
               <Link
                 href="/products"
                 className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:bg-[var(--card)] transition"

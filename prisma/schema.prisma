@@ -86,6 +86,6 @@ model Product {
   // নতুন ফিল্ড
   category Category @default(LAPTOP)
 
-  @@index([ownerEmail])
   @@index([category, createdAt])
+  @@index([price]) //
 }

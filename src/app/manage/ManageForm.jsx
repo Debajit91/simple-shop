@@ -23,6 +23,7 @@ export default function ManageForm() {
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const formRef = useRef(null);
+  const fileRef = useRef(null);
 
   useEffect(() => {
     if (state?.ok) {
@@ -32,9 +33,11 @@ export default function ManageForm() {
         timer: 1200,
         showConfirmButton: false,
         toast: true,
-        position: "middle-center",
+        position: "top-center",
       });
-      reset(); // ফর্ম ক্লিয়ার
+      formRef.current?.reset();
+      setImageUrl("");
+      if (fileRef.current) fileRef.current.value = ""; // ফর্ম ক্লিয়ার
       // প্রয়োজনে ইমেজ প্রিভিউ state ক্লিয়ার করো
     }
   }, [state?.ok]);
@@ -235,6 +238,7 @@ export default function ManageForm() {
             placeholder="Optional details…"
             className={`${inputCls} min-h-[140px]`}
           />
+          <input ref={fileRef} type="file" className="hidden" />
         </div>
 
         {/* Error */}

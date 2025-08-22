@@ -1,75 +1,120 @@
 import Link from "next/link";
-
-import AddToCartButton from "../../components/AddToCartButton";
 import { prisma } from "lib/prisma";
 
 export const metadata = { title: "Products — SimpleShop" };
 
-
-function formatPrice(n) {
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 2,
-    }).format(Number(n || 0));
-  } catch {
-    return `$${Number(n || 0).toFixed(2)}`;
-  }
-}
-
-const btnSm =
-  "inline-flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-semibold leading-none shadow-sm transition hover:-translate-y-0.5";
-
 export default async function ProductsPage({ searchParams }) {
-  const sp = await searchParams;
+  const sp = await searchParams; // Next.js 15: await
 
-  const pick = (v) => Array.isArray(v) ? v.at(-1) : (typeof v === "string" ? v : null);
+  // helper: string/array—শেষ ভ্যালু নাও
+  const pick = (v) =>
+    Array.isArray(v) ? v.at(-1) : typeof v === "string" ? v : null;
 
   const qSlug = (pick(sp?.q) || "").trim();
-  const catSlug = (pick(sp?.category) || "").trim().toLowerCase();
+  const catRaw = (pick(sp?.category) || "").trim().toLowerCase();
 
-  const category = typeof sp?.category === "string" ? sp.category : null;
-  const q = typeof sp?.q === "string" ? sp.q.trim() : "";
+  const SORT_DEFAULT = "new";
+  const sort = (pick(sp?.sort) || SORT_DEFAULT).toLowerCase();
+  const SORT_LABELS = {
+    new: "Newest",
+    "price-asc": "Price: Low → High",
+    "price-desc": "Price: High → Low",
+  };
+  const VALID_SORTS = new Set(Object.keys(SORT_LABELS));
+  const sortKey = VALID_SORTS.has(sort) ? sort : SORT_DEFAULT;
 
+  // UI slug -> Prisma enum
   const CAT_MAP = {
-    "smartwatch":  "SMART_WATCH",
-    "laptop":      "LAPTOP",
-    "earbuds":     "AIRPOD",       // enum এ AIRPOD
-    "tablet":      "IPAD",
-    "camera":      "CAMERA",
-    "video-camera":"VIDEO_CAMERA",
+    smartwatch: "SMART_WATCH",
+    laptop: "LAPTOP",
+    earbuds: "AIRPOD",
+    tablet: "IPAD",
+    camera: "CAMERA",
+    "video-camera": "VIDEO_CAMERA",
+    // enum নামও সাপোর্ট
+    SMART_WATCH: "SMART_WATCH",
+    LAPTOP: "LAPTOP",
+    AIRPOD: "AIRPOD",
+    IPAD: "IPAD",
+    CAMERA: "CAMERA",
+    VIDEO_CAMERA: "VIDEO_CAMERA",
+  };
+  const categoryEnum = CAT_MAP[catRaw] || null;
 
-    // যদি কখনো enum ভ্যালু দিয়েও কল হয়, সেগুলোকেও সাপোর্ট দেই
-    "SMART_WATCH":"SMART_WATCH",
-    "LAPTOP":"LAPTOP",
-    "AIRPOD":"AIRPOD",
-    "IPAD":"IPAD",
-    "CAMERA":"CAMERA",
-    "VIDEO_CAMERA":"VIDEO_CAMERA",
+  // ── পেজিনেশন ইনপুট ──────────────────────────────────────────────
+  const PER_PAGE_DEFAULT = 6;
+  const minPP = 6,
+    maxPP = 48;
+
+  const page = Math.max(1, parseInt(pick(sp?.page) || "1", 10) || 1);
+  const perPageInput = parseInt(
+    pick(sp?.per_page) || `${PER_PAGE_DEFAULT}`,
+    10
+  );
+  const perPage = Math.min(
+    maxPP,
+    Math.max(
+      minPP,
+      Number.isFinite(perPageInput) ? perPageInput : PER_PAGE_DEFAULT
+    )
+  );
+
+  // ফিল্টার অবজেক্ট
+  const where = {
+    AND: [
+      categoryEnum ? { category: categoryEnum } : {},
+      qSlug
+        ? {
+            OR: [
+              { name: { contains: qSlug, mode: "insensitive" } },
+              { description: { contains: qSlug, mode: "insensitive" } },
+            ],
+          }
+        : {},
+    ],
   };
 
-  // Prisma enum ভ্যালু (না পেলে null)
-  const categoryEnum = CAT_MAP[catSlug] || null;
+  let orderBy = [{ createdAt: "desc" }];
+  if (sortKey === "price-asc")
+    orderBy = [{ price: "asc" }, { createdAt: "desc" }];
+  if (sortKey === "price-desc")
+    orderBy = [{ price: "desc" }, { createdAt: "desc" }];
 
-  const items = await prisma.product.findMany({
-    where: {
-      AND: [
-        categoryEnum ? { category: categoryEnum } : {},
-        qSlug
-          ? {
-              OR: [
-                { name:        { contains: qSlug, mode: "insensitive" } },
-                { description: { contains: qSlug, mode: "insensitive" } },
-              ],
-            }
-          : {},
-      ],
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // মোট গণনা + পেজ ডাটা
+  const [total, items] = await Promise.all([
+    prisma.product.count({ where }),
+    prisma.product.findMany({
+      where,
+      orderBy,
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+  ]);
 
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
 
+  // কুয়েরি-স্ট্রিং বিল্ডার: category/q/per_page প্রিজার্ভ করে page বদলায়
+  const makeHref = (targetPage) => {
+    const params = new URLSearchParams();
+    if (categoryEnum) params.set("category", catRaw); // UI slug রেখে দিচ্ছি
+    if (qSlug) params.set("q", qSlug);
+    if (perPage !== PER_PAGE_DEFAULT) params.set("per_page", String(perPage));
+    if (sortKey !== SORT_DEFAULT) params.set("sort", sortKey);
+    params.set("page", String(targetPage));
+    const qs = params.toString();
+    return qs ? `/products?${qs}` : "/products";
+  };
+
+  // সুন্দর লেবেল (UI তে দেখানোর জন্য)
+  const LABELS = {
+    SMART_WATCH: "Smart Watch",
+    LAPTOP: "Laptop",
+    AIRPOD: "AirPods",
+    IPAD: "iPad",
+    CAMERA: "Camera",
+    VIDEO_CAMERA: "Video Camera",
+  };
+  const categoryLabel = categoryEnum ? LABELS[categoryEnum] : null;
 
   return (
     <section className="py-12 sm:py-16">
@@ -78,25 +123,38 @@ export default async function ProductsPage({ searchParams }) {
         <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold">
-              {category || q ? "Products" : "All products"}
+              {categoryEnum || qSlug ? "Products" : "All products"}
             </h1>
-
-            {/* Active filters line */}
             <p className="mt-1 text-sm text-[var(--foreground)]/70">
-              {category ? (
+              {categoryLabel && (
                 <>
-                  Category: <span className="font-medium">{category}</span>{" "}
+                  Category: <span className="font-medium">{categoryLabel}</span>{" "}
                 </>
-              ) : null}
-              {q ? (
+              )}
+              Sort: <span className="font-medium">{SORT_LABELS[sortKey]}</span>
+              {qSlug ? (
                 <>
-                  {category ? "• " : null}
-                  Search: <span className="font-medium">“{q}”</span>{" "}
+                  {categoryLabel ? "• " : null}Search:{" "}
+                  <span className="font-medium">“{qSlug}”</span>{" "}
                 </>
               ) : (
-                !category && "Browse our latest electronics."
+                !categoryLabel && "Browse our latest electronics."
               )}
-              {(category || q) && (
+              {total ? (
+                <>
+                  {" "}
+                  • Showing{" "}
+                  <span className="font-medium">
+                    {(page - 1) * perPage + 1}
+                  </span>
+                  –
+                  <span className="font-medium">
+                    {Math.min(page * perPage, total)}
+                  </span>{" "}
+                  of <span className="font-medium">{total}</span>
+                </>
+              ) : null}
+              {(categoryEnum || qSlug || page > 1) && (
                 <>
                   {" "}
                   <Link
@@ -110,31 +168,48 @@ export default async function ProductsPage({ searchParams }) {
             </p>
           </div>
 
-          {/* Search form (GET) — category preserve করবে */}
+          {/* Search form (GET) — category/page/per_page preserve করবে */}
           <form method="get" className="flex items-center gap-2">
-            {category && (
-              <input type="hidden" name="category" value={category} />
+            {categoryEnum && (
+              <input type="hidden" name="category" value={catRaw} />
             )}
+            {page !== 1 && <input type="hidden" name="page" value={page} />}
+            {perPage !== PER_PAGE_DEFAULT && (
+              <input type="hidden" name="per_page" value={perPage} />
+            )}
+
+            <label htmlFor="sort" className="sr-only">
+              Sort
+            </label>
+            {/* <select
+              id="sort"
+              name="sort"
+              defaultValue={sortKey}
+              className="rounded-md border border-[var(--border)] bg-[var(--background)] px-2 py-2 text-sm"
+            >
+              <option value="new">Newest</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
+            </select> */}
+
             <label htmlFor="q" className="sr-only">
               Search products
             </label>
             <input
               id="q"
               name="q"
-              defaultValue={q}
+              defaultValue={qSlug}
               placeholder="Search products…"
               className="w-56 sm:w-64 rounded-md border border-[var(--border)] bg-[var(--background)]
-                         px-3 py-2 text-sm outline-none
-                         focus-visible:ring-2 focus-visible:ring-indigo-500/40"
+                         px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
             />
             <button
               type="submit"
               className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold shadow-sm
                          text-[var(--accent-contrast)] bg-[image:var(--brand-gradient)]
                          hover:-translate-y-0.5 transition"
-              aria-label="Search"
             >
-              {/* magnifier icon */}
+              {/* magnifier */}
               <svg
                 viewBox="0 0 24 24"
                 className="h-4 w-4"
@@ -151,62 +226,133 @@ export default async function ProductsPage({ searchParams }) {
         {/* Empty state */}
         {!items.length && (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 text-sm">
-            No products found
-            {category ? ` for “${category}”` : ""}
-            {q ? (category ? ` matching “${q}”` : ` for “${q}”`) : ""}.
+            No products found{categoryLabel ? ` for “${categoryLabel}”` : ""}
+            {qSlug
+              ? categoryLabel
+                ? ` matching “${qSlug}”`
+                : ` for “${qSlug}”`
+              : ""}
+            .
           </div>
         )}
 
         {/* Grid */}
         {!!items.length && (
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((p) => (
-              <article
-                key={p.id}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 sm:p-4
-                           hover:-translate-y-0.5 hover:shadow-sm transition"
-              >
-                <div className="aspect-[16/10] overflow-hidden rounded-lg mb-3 border border-[var(--border)]">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
+          <>
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((p) => (
+                <article
+                  key={p.id}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 sm:p-4 hover:-translate-y-0.5 hover:shadow-sm transition"
+                >
+                  <div className="aspect-[16/10] overflow-hidden rounded-lg mb-3 border border-[var(--border)]">
+                    <img
+                      src={p.image || ""}
+                      alt={p.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <h2 className="text-base sm:text-lg font-semibold">
+                    {p.name}
+                  </h2>
+                  <p className="text-sm text-[var(--foreground)]/75 mt-1">
+                    {p.description}
+                  </p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-sm font-mono">
+                      ${(p.price ?? 0).toLocaleString()}
+                    </span>
+                    <Link
+                      href={`/products/${p.slug}`}
+                      className="inline-flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-semibold leading-none shadow-sm border border-[var(--border)] hover:bg-[var(--card)]"
+                    >
+                      Details
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
 
-                <h2 className="text-base sm:text-lg font-semibold">{p.name}</h2>
-                <p className="text-sm text-[var(--foreground)]/75 mt-1">
-                  {p.description}
-                </p>
-
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm font-mono">
-                    {formatPrice(p.price)}
-                  </span>
-                  <Link
-                    href={`/products/${p.id}`}
-                    className={`${btnSm} border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--card)]`}
-                    aria-label={`View details for ${p.name}`}
-                  >
-                    Details
-                  </Link>
-                  <AddToCartButton
-                    compact
-                    product={{
-                      id: p.id,
-                      name: p.name,
-                      price: p.price,
-                      image: p.image,
-                    }}
-                  />
-                </div>
-              </article>
-            ))}
-          </div>
+            {/* Pagination */}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              makeHref={makeHref}
+            />
+          </>
         )}
       </div>
     </section>
+  );
+}
+
+/** Simple pagination component (server) */
+function Pagination({ page, totalPages, makeHref }) {
+  if (totalPages <= 1) return null;
+
+  // window: current ±2, plus first/last with ellipses
+  const pages = [];
+  const push = (n) => pages.push(n);
+  const start = Math.max(1, page - 2);
+  const end = Math.min(totalPages, page + 2);
+
+  if (start > 1) {
+    push(1);
+    if (start > 2) push("…");
+  }
+  for (let i = start; i <= end; i++) push(i);
+  if (end < totalPages) {
+    if (end < totalPages - 1) push("…");
+    push(totalPages);
+  }
+
+  const baseBtn = "px-3 py-2 rounded-md text-sm border border-[var(--border)]";
+  const active = "bg-[var(--background)] font-semibold";
+  const linkCls = "hover:-translate-y-0.5 transition inline-flex items-center";
+
+  return (
+    <nav className="mt-8 flex items-center justify-center gap-2">
+      {/* Prev */}
+      <Link
+        href={makeHref(Math.max(1, page - 1))}
+        aria-disabled={page === 1}
+        className={`${baseBtn} ${linkCls} ${
+          page === 1 ? "pointer-events-none opacity-50" : ""
+        }`}
+      >
+        Prev
+      </Link>
+
+      {/* Numbers */}
+      {pages.map((p, idx) =>
+        p === "…" ? (
+          <span key={`e${idx}`} className="px-2 text-sm select-none">
+            …
+          </span>
+        ) : (
+          <Link
+            key={p}
+            href={makeHref(p)}
+            className={`${baseBtn} ${linkCls} ${p === page ? active : ""}`}
+            aria-current={p === page ? "page" : undefined}
+          >
+            {p}
+          </Link>
+        )
+      )}
+
+      {/* Next */}
+      <Link
+        href={makeHref(Math.min(totalPages, page + 1))}
+        aria-disabled={page === totalPages}
+        className={`${baseBtn} ${linkCls} ${
+          page === totalPages ? "pointer-events-none opacity-50" : ""
+        }`}
+      >
+        Next
+      </Link>
+    </nav>
   );
 }

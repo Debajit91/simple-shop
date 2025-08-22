@@ -46,7 +46,7 @@ A modern, minimal storefront for premium electronics built with **Next.js 15 (Ap
 
 ### 1) Clone & install
 
-git clone https://github.com/<your-user>/simple-shop.git
+git clone https://github.com/Debajit91/simple-shop.git
 cd simple-shop
 npm install
 

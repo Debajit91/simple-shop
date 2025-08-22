@@ -33,7 +33,7 @@ export default function ThemeToggle() {
     return (
       <button
         aria-label="Toggle theme"
-        className="p-2 rounded-md border border-transparent hover:border-[var(--border)]"
+        className="p-2 rounded-md border  border-transparent hover:border-[var(--border)]"
       >
         <div className="h-5 w-5 rounded-full bg-[var(--muted)]" />
       </button>
@@ -45,7 +45,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label="Toggle theme"
       title={isDark ? "Switch to light" : "Switch to dark"}
-      className="p-2 rounded-md hover:bg-[color:var(--card)]"
+      className="p-2 rounded-md hover:bg-[color:var(--card)] cursor-pointer"
     >
       {isDark ? (
         /* Sun icon */

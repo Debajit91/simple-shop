@@ -14,12 +14,13 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata = {
   title: "Simple Shop",
-  description: "A tiny Next.js demo shop",
+  description: "Browse & Buy",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+     
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}>
         <SessionProvider>
           <CartProvider>
